@@ -2,23 +2,6 @@
 
 A Progressive Web App for tracking fitness exercises with dates, weights, and notes. Optimized for mobile devices and offline use.
 
-## 🚀 Local Development
-
-### Prerequisites
-- Node.js (v16 or higher)
-- npm
-
-### Setup
-```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-The app will be available at `http://localhost:5173`
-
 ## 📱 Mobile Installation
 
 ### iPhone/iPad (iOS 16.4+)
@@ -51,19 +34,36 @@ The app organizes exercises in a two-level hierarchy:
 Perfect for tracking a routine with the same date:
 
 ```
-📅 2024-01-15
+📅 2024-02-15
 ├── 1. Bench Press (added first)
 ├── 2. Squats (added second)  
 ├── 3. Deadlifts (added third)
 └── 4. Pull-ups (added last)
 
-📅 2024-01-14
+📅 2024-01-15
 ├── 1. Running
 └── 2. Push-ups
 
 📅 No Date
 └── General exercises
 ```
+
+## 🚀 Local Development
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm
+
+### Setup
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`
 
 ## 🚀 GitHub Pages Deployment
 
@@ -80,7 +80,7 @@ Perfect for tracking a routine with the same date:
    - Source: "GitHub Actions"
    - The workflow will run automatically
 
-3. **Your app will be live at**: `https://yourusername.github.io/fitnessExerciseTrackingPWA`
+3. **Your app will be live at**: `https://huypham612.github.io/fitnessExerciseTrackingPWA`
 
 ### For Updates - Version Management
 1. **Make your code changes**

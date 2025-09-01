@@ -1,8 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Edit3, Dumbbell, X } from 'lucide-react';
 
+interface Exercise {
+  id: string;
+  name: string;
+  date: string | null;
+  weight: number | null;
+  note: string | null;
+  order: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 const FitnessTracker = () => {
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load exercises from localStorage on component mount
@@ -31,7 +42,7 @@ const FitnessTracker = () => {
     }
   }, [exercises, isLoaded]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [editingExercise, setEditingExercise] = useState(null);
+  const [editingExercise, setEditingExercise] = useState<Exercise | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({
     name: '',
@@ -75,22 +86,22 @@ const FitnessTracker = () => {
     resetForm();
   };
 
-  const handleEdit = (exercise) => {
+  const handleEdit = (exercise: Exercise) => {
     setEditingExercise(exercise);
     setFormData({
       name: exercise.name,
       date: exercise.date || '',
-      weight: exercise.weight || '',
+      weight: exercise.weight?.toString() || '',
       note: exercise.note || ''
     });
     setShowAddForm(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id: string) => {
     setExercises(prev => prev.filter(ex => ex.id !== id));
   };
 
-  const handleSearchKeyPress = (e) => {
+  const handleSearchKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchTerm.trim()) {
       const matchingExercises = exercises.filter(ex => 
         ex.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -116,8 +127,8 @@ const FitnessTracker = () => {
 
   const groupedExercises = () => {
     const sorted = sortedExercises();
-    const groups = [];
-    let currentGroup = null;
+    const groups: Array<{date: string; displayDate: string; exercises: Exercise[]}> = [];
+    let currentGroup: {date: string; displayDate: string; exercises: Exercise[]} | null = null;
 
     sorted.forEach(exercise => {
       const dateKey = exercise.date || 'no-date';
@@ -154,7 +165,7 @@ const FitnessTracker = () => {
       if (!hasDateA && hasDateB) return 1;
 
       if (hasDateA && hasDateB) {
-        const dateComparison = new Date(b.date) - new Date(a.date);
+        const dateComparison = new Date(b.date!).getTime() - new Date(a.date!).getTime();
         if (dateComparison !== 0) return dateComparison;
         
         // Sort by when added to this date (older first)
@@ -166,7 +177,7 @@ const FitnessTracker = () => {
     });
   };
 
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string) => {
     if (!dateString) return '';
     const [year, month, day] = dateString.split('-');
     const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
@@ -176,7 +187,7 @@ const FitnessTracker = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       {/* Version info for debugging - remove in production */}
-      {process.env.NODE_ENV === 'development' && (
+      {import.meta.env?.DEV && (
         <div className="text-xs text-gray-400 mb-2">
           v{__APP_VERSION__} - {new Date(__BUILD_TIME__).toLocaleString()}
         </div>
@@ -258,7 +269,7 @@ const FitnessTracker = () => {
                 </label>
                 <input
                   type="text"
-                  maxLength="30"
+                  maxLength={30}
                   value={formData.note}
                   onChange={(e) => setFormData(prev => ({ ...prev, note: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -316,7 +327,7 @@ const FitnessTracker = () => {
                 {group.displayDate}
               </h3>
               <div className="space-y-2">
-                {group.exercises.map((exercise, index) => (
+                {group.exercises.map((exercise: Exercise) => (
                   <div key={exercise.id} className="bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition-shadow">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
