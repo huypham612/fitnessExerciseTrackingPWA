@@ -55,10 +55,5 @@ export default defineConfig({
         ]
       }
     })
-  ],
-  // Add build timestamp for cache busting
-  define: {
-    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version || '1.0.0')
-  }
+  ]
 })

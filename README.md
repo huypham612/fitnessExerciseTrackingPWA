@@ -82,30 +82,24 @@ The app will be available at `http://localhost:5173`
 
 3. **Your app will be live at**: `https://huypham612.github.io/fitnessExerciseTrackingPWA`
 
-### For Updates - Version Management
+### For Updates - Simplified Workflow
 1. **Make your code changes**
-2. **Update version in `package.json`**:
-   ```json
-   {
-     "version": "1.0.1"
-   }
-   ```
-3. **Push to GitHub**:
+2. **Push to GitHub**:
    ```bash
    git add .
-   git commit -m "Version 1.0.1: Added new features"
-   git push origin main
+   git commit -m "Add new features"
+   git push origin master
    ```
-4. **GitHub Actions automatically builds and deploys**
-5. **Users get updates automatically** via service worker
+3. **GitHub Actions automatically builds and deploys**
+4. **Users get updates automatically** via service worker
 
-### For Users - Force Refresh
-When developers release updates, you may need to force refresh to see changes:
+### For Users - Getting Updates
+The app updates automatically via service worker, but if you don't see new changes:
 
 **On Mobile PWA:**
 - Close the app completely
 - Reopen the app
-- If changes don't appear, clear the app's cache in Settings > Safari > Clear Website Data
+- If changes still don't appear, clear the app's cache in Settings > Safari > Clear Website Data
 
 **On Web Browser:**
 - Hard refresh: `Ctrl+F5` (Windows) or `Cmd+Shift+R` (Mac)
