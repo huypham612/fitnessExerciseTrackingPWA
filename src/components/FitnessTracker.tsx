@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Edit3, Dumbbell, X } from 'lucide-react';
+import { Edit3, X } from 'lucide-react';
 
 interface Exercise {
   id: string;
@@ -186,12 +186,6 @@ const FitnessTracker = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 min-h-screen">
-      {/* Version info for debugging - remove in production */}
-      {import.meta.env?.DEV && (
-        <div className="text-xs text-gray-400 mb-2">
-          v{__APP_VERSION__} - {new Date(__BUILD_TIME__).toLocaleString()}
-        </div>
-      )}
       <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 mb-4 sm:mb-6">
         <div className="relative">
           <input
