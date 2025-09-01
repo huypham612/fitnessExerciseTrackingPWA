@@ -1,30 +1,887 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitness Exercise Tracker</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2563eb" />
-    <meta name="description" content="Track your fitness exercises with ease" />
-    <link rel="manifest" href="/manifest.json" />
+    <meta name="description" content="Track your fitness exercises with ease">
+    <meta name="theme-color" content="#2563eb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FitnessTracker">
     
-    <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" href="/pwa-192x192.png" />
-    
-    <!-- iOS Status Bar -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="FitnessTracker" />
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <title>Fitness Exercise Tracker</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+    <link rel="apple-touch-icon" href="icon-180.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #374151;
+            min-height: 100vh;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #111827;
+                color: #e5e7eb;
+            }
+        }
+
+        .container {
+            max-width: 64rem;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                padding: 1.5rem;
+            }
+        }
+
+        .search-box {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .search-box {
+                background-color: #1f2937;
+            }
+        }
+
+        @media (min-width: 640px) {
+            .search-box {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-right: 2.5rem;
+            font-size: 1.125rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            color: #374151;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .search-input {
+                background-color: #374151;
+                border-color: #4b5563;
+                color: #e5e7eb;
+            }
+        }
+
+        .search-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0.25rem;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+
+        .clear-btn:hover {
+            color: #6b7280;
+            background-color: #f3f4f6;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .clear-btn:hover {
+                background-color: #374151;
+            }
+        }
+
+        .search-hint {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+
+        .form-card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .form-card {
+                background-color: #1f2937;
+            }
+        }
+
+        @media (min-width: 640px) {
+            .form-card {
+                padding: 1.5rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .form-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .form-label {
+                color: #e5e7eb;
+            }
+        }
+
+        .form-input {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            outline: none;
+            transition: all 0.2s;
+            background-color: #ffffff;
+            color: #374151;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .form-input {
+                background-color: #374151;
+                border-color: #4b5563;
+                color: #e5e7eb;
+            }
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: #2563eb;
+        }
+
+        .btn-primary:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #d1d5db;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #9ca3af;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btn-secondary {
+                background-color: #4b5563;
+                color: #e5e7eb;
+            }
+            
+            .btn-secondary:hover {
+                background-color: #6b7280;
+            }
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1f2937;
+            padding: 0 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .section-title {
+                color: #e5e7eb;
+            }
+        }
+
+        .exercises-list {
+            margin-bottom: 1.5rem;
+        }
+
+        .exercise-card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.05);
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.25rem;
+            transition: box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .exercise-card {
+                background-color: #1f2937;
+            }
+        }
+
+        .exercise-card:hover {
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .exercise-card:hover {
+                background-color: #374151;
+            }
+        }
+
+        .exercise-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 640px) {
+            .exercise-info {
+                gap: 0.75rem;
+            }
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .exercise-name {
+                color: #e5e7eb;
+            }
+        }
+
+        .exercise-weight {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        @media (min-width: 640px) {
+            .exercise-weight {
+                font-size: 1rem;
+            }
+        }
+
+        .exercise-note {
+            font-size: 0.875rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        @media (min-width: 640px) {
+            .exercise-note {
+                font-size: 1rem;
+            }
+        }
+
+        .edit-btn {
+            padding: 0.75rem;
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-btn:hover {
+            color: #3b82f6;
+            background-color: #dbeafe;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .edit-btn:hover {
+                background-color: #1e40af;
+            }
+        }
+
+        .empty-state {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .empty-state {
+                background-color: #1f2937;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .empty-state {
+                padding: 1rem;
+            }
+        }
+
+        .empty-text {
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-hint {
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .character-count {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .install-prompt {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .install-prompt:hover {
+            background-color: #2563eb;
+            transform: translateX(-50%) translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .install-dismiss {
+            margin-left: 0.5rem;
+            opacity: 0.7;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .install-dismiss:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-box">
+            <div style="position: relative;">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    class="search-input" 
+                    placeholder="Search exercises or type to add new..."
+                >
+                <button id="clearBtn" class="clear-btn hidden">×</button>
+            </div>
+            <div id="searchHint" class="search-hint hidden"></div>
+        </div>
+
+        <div id="formCard" class="form-card hidden">
+            <h2 id="formTitle" class="form-title">Add New Exercise</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Exercise Name *</label>
+                    <input type="text" id="exerciseName" class="form-input" placeholder="e.g., Push-ups, Squats, Planks">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" id="exerciseDate" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Weight (lbs)</label>
+                    <input type="number" id="exerciseWeight" class="form-input" step="0.5" placeholder="Optional">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes <span id="noteCount" class="character-count">(0/30)</span></label>
+                    <input type="text" id="exerciseNote" class="form-input" maxlength="30" placeholder="Quick note...">
+                </div>
+            </div>
+            <div class="form-buttons">
+                <button id="submitBtn" class="btn btn-primary">Add Exercise</button>
+                <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
+                <button id="deleteBtn" class="btn btn-danger hidden">Delete Exercise</button>
+            </div>
+        </div>
+
+        <div id="exercisesList"></div>
+
+        <div id="emptyState" class="empty-state">
+            <div class="empty-text">No exercises yet</div>
+            <div class="empty-hint">Type in the search box to add your first exercise</div>
+        </div>
+
+        <div id="installPrompt" class="install-prompt">
+            <span>📱 Install Fitness Tracker</span>
+            <span class="install-dismiss">×</span>
+        </div>
+    </div>
+
+    <script>
+        let exercises = [];
+        let isLoaded = false;
+        let editingExercise = null;
+        let deferredPrompt;
+
+        const searchInput = document.getElementById('searchInput');
+        const clearBtn = document.getElementById('clearBtn');
+        const searchHint = document.getElementById('searchHint');
+        const formCard = document.getElementById('formCard');
+        const formTitle = document.getElementById('formTitle');
+        const exerciseName = document.getElementById('exerciseName');
+        const exerciseDate = document.getElementById('exerciseDate');
+        const exerciseWeight = document.getElementById('exerciseWeight');
+        const exerciseNote = document.getElementById('exerciseNote');
+        const noteCount = document.getElementById('noteCount');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const exercisesList = document.getElementById('exercisesList');
+        const emptyState = document.getElementById('emptyState');
+        const installPrompt = document.getElementById('installPrompt');
+
+        function generateId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const [year, month, day] = dateString.split('-');
+            const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+            return date.toLocaleDateString();
+        }
+
+        function loadExercises() {
+            try {
+                const saved = localStorage.getItem('fitnessExerciseTracker.exercises');
+                if (saved) {
+                    exercises = JSON.parse(saved);
+                }
+            } catch (error) {
+                console.error('Error loading exercises:', error);
+            } finally {
+                isLoaded = true;
+            }
+        }
+
+        function saveExercises() {
+            if (!isLoaded) return;
+            try {
+                localStorage.setItem('fitnessExerciseTracker.exercises', JSON.stringify(exercises));
+            } catch (error) {
+                console.error('Error saving exercises:', error);
+            }
+        }
+
+        function resetForm() {
+            exerciseName.value = '';
+            exerciseDate.value = '';
+            exerciseWeight.value = '';
+            exerciseNote.value = '';
+            updateNoteCount();
+            editingExercise = null;
+            formCard.classList.add('hidden');
+            formTitle.textContent = 'Add New Exercise';
+            submitBtn.textContent = 'Add Exercise';
+            deleteBtn.classList.add('hidden');
+        }
+
+        function showForm(exercise = null) {
+            if (exercise) {
+                editingExercise = exercise;
+                exerciseName.value = exercise.name;
+                exerciseDate.value = exercise.date || '';
+                exerciseWeight.value = exercise.weight || '';
+                exerciseNote.value = exercise.note || '';
+                formTitle.textContent = 'Edit Exercise';
+                submitBtn.textContent = 'Update Exercise';
+                deleteBtn.classList.remove('hidden');
+            } else {
+                resetForm();
+                formTitle.textContent = 'Add New Exercise';
+                submitBtn.textContent = 'Add Exercise';
+                deleteBtn.classList.add('hidden');
+            }
+            formCard.classList.remove('hidden');
+            updateNoteCount();
+        }
+
+        function handleSubmit() {
+            const name = exerciseName.value.trim();
+            if (!name) return;
+
+            const exerciseData = {
+                id: editingExercise ? editingExercise.id : generateId(),
+                name: name,
+                date: exerciseDate.value || null,
+                weight: exerciseWeight.value ? parseFloat(exerciseWeight.value) : null,
+                note: exerciseNote.value.trim() || null,
+                order: editingExercise ? editingExercise.order : Date.now(),
+                createdAt: editingExercise ? editingExercise.createdAt : new Date().toISOString(),
+                updatedAt: editingExercise && editingExercise.date === (exerciseDate.value || null) ? 
+                    editingExercise.updatedAt : new Date().toISOString()
+            };
+
+            if (editingExercise) {
+                exercises = exercises.map(ex => ex.id === editingExercise.id ? exerciseData : ex);
+            } else {
+                exercises.push(exerciseData);
+            }
+
+            saveExercises();
+            renderExercises();
+            resetForm();
+        }
+
+        function handleDelete() {
+            if (!editingExercise) return;
+            exercises = exercises.filter(ex => ex.id !== editingExercise.id);
+            saveExercises();
+            renderExercises();
+            resetForm();
+        }
+
+        function updateNoteCount() {
+            const count = exerciseNote.value.length;
+            noteCount.textContent = `(${count}/30)`;
+        }
+
+        function handleSearch() {
+            const term = searchInput.value.trim();
+            
+            if (term) {
+                clearBtn.classList.remove('hidden');
+                const filtered = exercises.filter(ex => 
+                    ex.name.toLowerCase().includes(term.toLowerCase())
+                );
+                
+                if (filtered.length === 0) {
+                    searchHint.textContent = `Press Enter to add "${term}" as a new exercise`;
+                    searchHint.classList.remove('hidden');
+                } else {
+                    searchHint.classList.add('hidden');
+                }
+            } else {
+                clearBtn.classList.add('hidden');
+                searchHint.classList.add('hidden');
+            }
+            
+            renderExercises();
+        }
+
+        function handleSearchKeyPress(e) {
+            if (e.key === 'Enter') {
+                const term = searchInput.value.trim();
+                if (term) {
+                    const matching = exercises.filter(ex => 
+                        ex.name.toLowerCase().includes(term.toLowerCase())
+                    );
+                    
+                    if (matching.length === 0) {
+                        const newExercise = {
+                            id: generateId(),
+                            name: term,
+                            date: null,
+                            weight: null,
+                            note: null,
+                            order: Date.now(),
+                            createdAt: new Date().toISOString(),
+                            updatedAt: new Date().toISOString()
+                        };
+                        exercises.push(newExercise);
+                        saveExercises();
+                        renderExercises();
+                        searchInput.value = '';
+                        handleSearch();
+                    }
+                }
+            }
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            handleSearch();
+        }
+
+        function getSortedExercises() {
+            const term = searchInput.value.trim().toLowerCase();
+            let filtered = exercises;
+            
+            if (term) {
+                filtered = exercises.filter(ex => 
+                    ex.name.toLowerCase().includes(term)
+                );
+            }
+
+            return filtered.sort((a, b) => {
+                const hasDateA = !!a.date;
+                const hasDateB = !!b.date;
+
+                if (hasDateA && !hasDateB) return -1;
+                if (!hasDateA && hasDateB) return 1;
+
+                if (hasDateA && hasDateB) {
+                    const dateComparison = new Date(b.date).getTime() - new Date(a.date).getTime();
+                    if (dateComparison !== 0) return dateComparison;
+                    return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+                }
+
+                return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+            });
+        }
+
+        function groupExercises(sortedExercises) {
+            const groups = [];
+            let currentGroup = null;
+
+            sortedExercises.forEach(exercise => {
+                const dateKey = exercise.date || 'no-date';
+                
+                if (!currentGroup || currentGroup.date !== dateKey) {
+                    currentGroup = {
+                        date: dateKey,
+                        displayDate: exercise.date ? formatDate(exercise.date) : 'No Date',
+                        exercises: []
+                    };
+                    groups.push(currentGroup);
+                }
+                
+                currentGroup.exercises.push(exercise);
+            });
+
+            return groups;
+        }
+
+        function renderExercises() {
+            const sortedExercises = getSortedExercises();
+            
+            if (sortedExercises.length === 0) {
+                exercisesList.innerHTML = '';
+                const term = searchInput.value.trim();
+                if (term) {
+                    emptyState.innerHTML = `
+                        <div class="empty-text">No exercises found</div>
+                        <div class="empty-hint">Press Enter to add "${term}" as a new exercise</div>
+                    `;
+                } else {
+                    emptyState.innerHTML = `
+                        <div class="empty-text">No exercises yet</div>
+                        <div class="empty-hint">Type in the search box to add your first exercise</div>
+                    `;
+                }
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            const groups = groupExercises(sortedExercises);
+            
+            exercisesList.innerHTML = groups.map(group => `
+                <div class="exercises-list">
+                    <h3 class="section-title">${group.displayDate}</h3>
+                    ${group.exercises.map(exercise => `
+                        <div class="exercise-card">
+                            <div class="exercise-info">
+                                <span class="exercise-name">${exercise.name}</span>
+                                ${exercise.weight ? `<span class="exercise-weight">${exercise.weight}lbs</span>` : ''}
+                                ${exercise.note ? `<span class="exercise-note">${exercise.note}</span>` : ''}
+                            </div>
+                            <button class="edit-btn" onclick="editExercise('${exercise.id}')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+        }
+
+        window.editExercise = function(id) {
+            const exercise = exercises.find(ex => ex.id === id);
+            if (exercise) {
+                showForm(exercise);
+            }
+        };
+
+        searchInput.addEventListener('input', handleSearch);
+        searchInput.addEventListener('keypress', handleSearchKeyPress);
+        clearBtn.addEventListener('click', clearSearch);
+        exerciseNote.addEventListener('input', updateNoteCount);
+        submitBtn.addEventListener('click', handleSubmit);
+        cancelBtn.addEventListener('click', resetForm);
+        deleteBtn.addEventListener('click', handleDelete);
+
+        function updateSubmitButton() {
+            submitBtn.disabled = !exerciseName.value.trim();
+        }
+
+        exerciseName.addEventListener('input', updateSubmitButton);
+
+        [exerciseName, exerciseDate, exerciseWeight, exerciseNote].forEach(input => {
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleSubmit();
+                }
+            });
+        });
+
+        // CRITICAL: Register Service Worker FIRST
+        if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('✅ Fitness Tracker PWA registered successfully');
+                })
+                .catch(error => {
+                    console.log('❌ Fitness Tracker PWA registration failed:', error);
+                });
+        } else if (location.protocol === 'file:') {
+            console.log('ℹ️ Service Worker disabled for file:// protocol');
+        }
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                return;
+            }
+            
+            setTimeout(() => {
+                installPrompt.style.display = 'flex';
+                
+                installPrompt.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('install-dismiss')) {
+                        installPrompt.style.display = 'none';
+                        return;
+                    }
+                    
+                    installPrompt.style.display = 'none';
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted the Fitness Tracker install prompt');
+                        }
+                        deferredPrompt = null;
+                    });
+                });
+            }, 5000);
+        });
+
+        loadExercises();
+        renderExercises();
+        updateSubmitButton();
+    </script>
+</body>
 </html>
