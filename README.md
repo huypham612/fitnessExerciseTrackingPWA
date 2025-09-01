@@ -50,20 +50,20 @@ Perfect for tracking a routine with the same date:
 
 ## 🚀 Local Development
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm
+### Simple Setup
+This is a static HTML/CSS/JavaScript app - no build process needed!
 
-### Setup
 ```bash
-# Install dependencies
-npm install
+# Option 1: Use Python's built-in server
+python -m http.server 8000
 
-# Start development server
-npm run dev
+# Option 2: Use Node.js serve (if you have it installed)
+npx serve .
+
+# Option 3: Use any local server or open index.html directly
 ```
 
-The app will be available at `http://localhost:5173`
+The app will be available at `http://localhost:8000`
 
 ## 🚀 GitHub Pages Deployment
 
@@ -77,30 +77,32 @@ The app will be available at `http://localhost:5173`
 
 2. **Enable GitHub Pages**:
    - Go to your repo: Settings → Pages
-   - Source: "GitHub Actions"
-   - The workflow will run automatically
+   - Source: "Deploy from a branch"
+   - Branch: "main" (or "master")
+   - Folder: "/ (root)"
+   - Click "Save"
 
 3. **Your app will be live at**: https://huypham612.github.io/fitnessExerciseTrackingPWA
 
-### For Updates - Simplified Workflow
-1. **Make your code changes**
+### For Updates - Simple Workflow
+1. **Edit the files directly** (index.html, sw.js, manifest.json, etc.)
 2. **Push to GitHub**:
    ```bash
    git add .
-   git commit -m "Add new features"
-   git push origin master
+   git commit -m "Update app features"
+   git push origin main
    ```
-3. **GitHub Actions automatically builds and deploys**
+3. **GitHub Pages automatically updates** (usually within 1-2 minutes)
 4. **Users get updates automatically** via service worker
 
 ### For Users - Getting Updates
-The app updates automatically via service worker, but if you don't see new changes:
+The app updates automatically via service worker when you reopen it. If you don't see new changes:
 
 **On Mobile PWA:**
-- Close the app completely
-- Reopen the app
-- If changes still don't appear, clear the app's cache in Settings > Safari > Clear Website Data
+- Close the app completely (swipe up and close)
+- Reopen the app from home screen
+- New version will download automatically
 
 **On Web Browser:**
-- Hard refresh: `Ctrl+F5` (Windows) or `Cmd+Shift+R` (Mac)
-- Or clear browser cache for the site
+- Refresh the page normally
+- Service worker will check for updates and apply them
