@@ -17,7 +17,7 @@ export default defineConfig({
         theme_color: '#2563eb',
         background_color: '#f9fafb',
         display: 'standalone',
-        start_url: '/',
+        start_url: '/fitnessExerciseTrackingPWA/',
         icons: [
           {
             src: 'pwa-192x192.png',
