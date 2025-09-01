@@ -185,14 +185,14 @@ const FitnessTracker = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+    <div className="max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 min-h-screen">
       {/* Version info for debugging - remove in production */}
       {import.meta.env?.DEV && (
         <div className="text-xs text-gray-400 mb-2">
           v{__APP_VERSION__} - {new Date(__BUILD_TIME__).toLocaleString()}
         </div>
       )}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+      <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 mb-4 sm:mb-6">
         <div className="relative">
           <input
             type="text"
@@ -220,7 +220,7 @@ const FitnessTracker = () => {
       </div>
 
       {showAddForm && (
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
           <h2 className="text-xl font-semibold mb-4">
             {editingExercise ? 'Edit Exercise' : 'Add New Exercise'}
           </h2>
@@ -326,40 +326,29 @@ const FitnessTracker = () => {
               <h3 className="text-lg font-semibold text-gray-800 px-2">
                 {group.displayDate}
               </h3>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {group.exercises.map((exercise: Exercise) => (
-                  <div key={exercise.id} className="bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between">
+                  <div key={exercise.id} className="bg-white rounded-lg shadow-xs py-2 px-3 hover:shadow-sm transition-shadow">
+                    <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center gap-3 flex-wrap">
-                          <h4 className="font-semibold text-xl text-gray-900">{exercise.name}</h4>
+                        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+                          <h4 className="font-semibold text-base text-gray-900">{exercise.name}</h4>
                           {exercise.weight && (
-                            <>
-                              <span className="text-gray-400">•</span>
-                              <div className="flex items-center gap-2 text-gray-600">
-                                <Dumbbell size={16} />
-                                <span className="text-lg font-medium">{exercise.weight} lbs</span>
-                              </div>
-                            </>
+                            <span className="text-sm sm:text-base font-medium text-gray-600">{exercise.weight}lbs</span>
                           )}
                           {exercise.note && (
-                            <>
-                              <span className="text-gray-400">•</span>
-                              <div className="text-sm text-gray-500 italic">
-                                {exercise.note}
-                              </div>
-                            </>
+                            <span className="text-sm sm:text-base text-gray-500 italic">{exercise.note}</span>
                           )}
                         </div>
                       </div>
                       
-                      <div className="flex gap-2 items-center">
+                      <div className="flex gap-1 items-center">
                         <button
                           onClick={() => handleEdit(exercise)}
-                          className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          className="p-3 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
                           title="Edit exercise"
                         >
-                          <Edit3 size={20} />
+                          <Edit3 size={18} />
                         </button>
                       </div>
                     </div>
