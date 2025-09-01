@@ -10,7 +10,6 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
-      scope: '/fitnessExerciseTrackingPWA/',
       manifest: {
         name: 'Fitness Exercise Tracker',
         short_name: 'FitnessTracker',
@@ -19,7 +18,6 @@ export default defineConfig({
         background_color: '#f9fafb',
         display: 'standalone',
         start_url: '/fitnessExerciseTrackingPWA/',
-        scope: '/fitnessExerciseTrackingPWA/',
         icons: [
           {
             src: 'pwa-192x192.png',
