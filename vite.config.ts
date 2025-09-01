@@ -17,8 +17,8 @@ export default defineConfig({
         theme_color: '#2563eb',
         background_color: '#f9fafb',
         display: 'standalone',
-        start_url: './',
-        scope: './',
+        start_url: 'https://huypham612.github.io/fitnessExerciseTrackingPWA/',
+        scope: 'https://huypham612.github.io/fitnessExerciseTrackingPWA/',
         icons: [
           {
             src: 'pwa-192x192.png',

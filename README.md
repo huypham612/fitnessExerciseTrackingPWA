@@ -5,7 +5,7 @@ A Progressive Web App for tracking fitness exercises with dates, weights, and no
 ## 📱 Mobile Installation
 
 ### iPhone/iPad (iOS 16.4+)
-1. Open the app in Safari: `https://huypham612.github.io/fitnessExerciseTrackingPWA`
+1. Open the app in Safari: https://huypham612.github.io/fitnessExerciseTrackingPWA
 2. Tap the Share button (square with arrow)
 3. Scroll down and tap "Add to Home Screen"
 4. Tap "Add" to install the PWA
@@ -80,7 +80,7 @@ The app will be available at `http://localhost:5173`
    - Source: "GitHub Actions"
    - The workflow will run automatically
 
-3. **Your app will be live at**: `https://huypham612.github.io/fitnessExerciseTrackingPWA`
+3. **Your app will be live at**: https://huypham612.github.io/fitnessExerciseTrackingPWA
 
 ### For Updates - Simplified Workflow
 1. **Make your code changes**
