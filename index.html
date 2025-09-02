@@ -508,9 +508,9 @@
                 </div>
             </div>
             <div class="form-buttons">
-                <button id="submitBtn" class="btn btn-primary">Add Exercise</button>
+                <button id="submitBtn" class="btn btn-primary">Update</button>
                 <button id="cancelBtn" class="btn btn-secondary">Cancel</button>
-                <button id="deleteBtn" class="btn btn-danger hidden">Delete Exercise</button>
+                <button id="deleteBtn" class="btn btn-danger hidden">Delete</button>
             </div>
         </div>
 
@@ -531,6 +531,7 @@
         let exercises = [];
         let isLoaded = false;
         let editingExercise = null;
+        let originalExerciseId = null; // Track original exercise for cancel action
         let deferredPrompt;
 
         const searchInput = document.getElementById('searchInput');
@@ -583,37 +584,43 @@
             }
         }
 
-        function resetForm() {
+        function resetForm(isCancel = false) {
+            const cancelExerciseId = isCancel ? originalExerciseId : null;
+            
             exerciseName.value = '';
             exerciseDate.value = '';
             exerciseWeight.value = '';
             exerciseNote.value = '';
             updateNoteCount();
             editingExercise = null;
+            originalExerciseId = null;
             formCard.classList.add('hidden');
-            formTitle.textContent = 'Add New Exercise';
-            submitBtn.textContent = 'Add Exercise';
+            formTitle.textContent = 'Edit Exercise';
+            submitBtn.textContent = 'Update';
             deleteBtn.classList.add('hidden');
+            
+            // If canceling, scroll back to the original exercise
+            if (cancelExerciseId) {
+                scrollToExercise(cancelExerciseId);
+            }
         }
 
-        function showForm(exercise = null) {
-            if (exercise) {
-                editingExercise = exercise;
-                exerciseName.value = exercise.name;
-                exerciseDate.value = exercise.date || '';
-                exerciseWeight.value = exercise.weight || '';
-                exerciseNote.value = exercise.note || '';
-                formTitle.textContent = 'Edit Exercise';
-                submitBtn.textContent = 'Update Exercise';
-                deleteBtn.classList.remove('hidden');
-            } else {
-                resetForm();
-                formTitle.textContent = 'Add New Exercise';
-                submitBtn.textContent = 'Add Exercise';
-                deleteBtn.classList.add('hidden');
-            }
+        function showForm(exercise) {
+            editingExercise = exercise;
+            originalExerciseId = exercise.id; // Track for cancel action
+            exerciseName.value = exercise.name;
+            exerciseDate.value = exercise.date || '';
+            exerciseWeight.value = exercise.weight || '';
+            exerciseNote.value = exercise.note || '';
+            formTitle.textContent = 'Edit Exercise';
+            submitBtn.textContent = 'Update';
+            deleteBtn.classList.remove('hidden');
             formCard.classList.remove('hidden');
             updateNoteCount();
+            updateSubmitButton();
+            
+            // Scroll form into view smoothly
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         function handleSubmit() {
@@ -632,6 +639,8 @@
                     editingExercise.updatedAt : new Date().toISOString()
             };
 
+            const updatedExerciseId = exerciseData.id;
+
             if (editingExercise) {
                 exercises = exercises.map(ex => ex.id === editingExercise.id ? exerciseData : ex);
             } else {
@@ -641,19 +650,57 @@
             saveExercises();
             renderExercises();
             resetForm();
+            
+            // Scroll to the updated exercise
+            scrollToExercise(updatedExerciseId);
         }
 
         function handleDelete() {
             if (!editingExercise) return;
+            
+            // Find a nearby exercise to scroll to after deletion
+            const currentIndex = exercises.findIndex(ex => ex.id === editingExercise.id);
+            let targetExerciseId = null;
+            
+            // Try to find next exercise, then previous, then any remaining
+            if (currentIndex < exercises.length - 1) {
+                targetExerciseId = exercises[currentIndex + 1].id;
+            } else if (currentIndex > 0) {
+                targetExerciseId = exercises[currentIndex - 1].id;
+            }
+            
             exercises = exercises.filter(ex => ex.id !== editingExercise.id);
             saveExercises();
             renderExercises();
             resetForm();
+            
+            // Scroll to nearby exercise or top if list is empty
+            if (targetExerciseId && exercises.length > 0) {
+                scrollToExercise(targetExerciseId);
+            } else {
+                // If no exercises left, scroll to top smoothly
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
+            }
         }
 
         function updateNoteCount() {
             const count = exerciseNote.value.length;
             noteCount.textContent = `(${count}/30)`;
+        }
+
+        function scrollToExercise(exerciseId) {
+            // Small delay to ensure DOM has updated after re-render
+            setTimeout(() => {
+                const exerciseCard = document.querySelector(`[onclick="editExercise('${exerciseId}')"]`);
+                if (exerciseCard) {
+                    exerciseCard.closest('.exercise-card').scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center' 
+                    });
+                }
+            }, 100);
         }
 
         function handleSearch() {
@@ -820,7 +867,7 @@
         clearBtn.addEventListener('click', clearSearch);
         exerciseNote.addEventListener('input', updateNoteCount);
         submitBtn.addEventListener('click', handleSubmit);
-        cancelBtn.addEventListener('click', resetForm);
+        cancelBtn.addEventListener('click', () => resetForm(true));
         deleteBtn.addEventListener('click', handleDelete);
 
         function updateSubmitButton() {
