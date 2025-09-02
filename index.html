@@ -532,6 +532,8 @@
         let isLoaded = false;
         let editingExercise = null;
         let originalExerciseId = null; // Track original exercise for cancel action
+        let editingDateGroup = null; // Track date group being edited
+        let originalDateGroupKey = null; // Track original date group for cancel
         let deferredPrompt;
 
         const searchInput = document.getElementById('searchInput');
@@ -586,22 +588,44 @@
 
         function resetForm(isCancel = false) {
             const cancelExerciseId = isCancel ? originalExerciseId : null;
+            const cancelDateGroupKey = isCancel ? originalDateGroupKey : null;
             
             exerciseName.value = '';
             exerciseDate.value = '';
             exerciseWeight.value = '';
             exerciseNote.value = '';
             updateNoteCount();
+            
+            // Clear editing states
             editingExercise = null;
             originalExerciseId = null;
+            editingDateGroup = null;
+            originalDateGroupKey = null;
+            
             formCard.classList.add('hidden');
             formTitle.textContent = 'Edit Exercise';
             submitBtn.textContent = 'Update';
             deleteBtn.classList.add('hidden');
             
-            // If canceling, scroll back to the original exercise
+            // Restore all form fields visibility (in case they were hidden for date group editing)
+            exerciseName.closest('.form-group').style.display = 'flex';
+            exerciseWeight.closest('.form-group').style.display = 'flex';
+            exerciseNote.closest('.form-group').style.display = 'flex';
+            
+            // Handle cancel scrolling
             if (cancelExerciseId) {
                 scrollToExercise(cancelExerciseId);
+            } else if (cancelDateGroupKey) {
+                // Scroll back to original date group
+                setTimeout(() => {
+                    const dateGroup = document.querySelector(`[onclick*="editDateGroup('${cancelDateGroupKey}'"]`);
+                    if (dateGroup) {
+                        dateGroup.closest('.exercises-list').scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'start' 
+                        });
+                    }
+                }, 100);
             }
         }
 
@@ -624,6 +648,44 @@
         }
 
         function handleSubmit() {
+            // Handle date group editing
+            if (editingDateGroup) {
+                const newDate = exerciseDate.value || null;
+                const oldDateKey = editingDateGroup.dateKey;
+                
+                // Update all exercises in the date group
+                exercises = exercises.map(ex => {
+                    const exerciseDate = ex.date || 'no-date';
+                    if (exerciseDate === oldDateKey) {
+                        return {
+                            ...ex,
+                            date: newDate,
+                            updatedAt: new Date().toISOString()
+                        };
+                    }
+                    return ex;
+                });
+
+                saveExercises();
+                renderExercises();
+                resetForm();
+                
+                // Scroll to the new date group location
+                if (newDate) {
+                    setTimeout(() => {
+                        const newDateGroup = document.querySelector(`[onclick*="editDateGroup('${newDate}'"]`);
+                        if (newDateGroup) {
+                            newDateGroup.closest('.exercises-list').scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start' 
+                            });
+                        }
+                    }, 100);
+                }
+                return;
+            }
+
+            // Handle individual exercise editing
             const name = exerciseName.value.trim();
             if (!name) return;
 
@@ -835,7 +897,15 @@
             
             exercisesList.innerHTML = groups.map(group => `
                 <div class="exercises-list">
-                    <h3 class="section-title">${group.displayDate}</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                        <h3 class="section-title" style="margin-bottom: 0;">${group.displayDate}</h3>
+                        <button class="edit-btn" onclick="editDateGroup('${group.date}', ${group.exercises.length})" style="padding: 0.5rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                    </div>
                     ${group.exercises.map(exercise => `
                         <div class="exercise-card">
                             <div class="exercise-info">
@@ -862,6 +932,39 @@
             }
         };
 
+        window.editDateGroup = function(dateKey, exerciseCount) {
+            // Set up date group editing mode
+            editingDateGroup = { dateKey, exerciseCount };
+            originalDateGroupKey = dateKey;
+            editingExercise = null; // Clear individual exercise editing
+            
+            // Set current date as default
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Clear form fields
+            exerciseName.value = '';
+            exerciseWeight.value = '';
+            exerciseNote.value = '';
+            exerciseDate.value = today; // Always use current date
+            
+            // Configure form for date group editing
+            formTitle.textContent = `Edit Date for ${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''}`;
+            submitBtn.textContent = 'Update Date';
+            deleteBtn.classList.add('hidden'); // No delete for group editing
+            
+            // Hide name, weight, note fields - only show date
+            exerciseName.closest('.form-group').style.display = 'none';
+            exerciseWeight.closest('.form-group').style.display = 'none';
+            exerciseNote.closest('.form-group').style.display = 'none';
+            
+            formCard.classList.remove('hidden');
+            updateNoteCount();
+            updateSubmitButton();
+            
+            // Scroll form into view smoothly
+            formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
+
         searchInput.addEventListener('input', handleSearch);
         searchInput.addEventListener('keypress', handleSearchKeyPress);
         clearBtn.addEventListener('click', clearSearch);
@@ -871,7 +974,13 @@
         deleteBtn.addEventListener('click', handleDelete);
 
         function updateSubmitButton() {
-            submitBtn.disabled = !exerciseName.value.trim();
+            // For date group editing, always enable button since we only need date
+            // For individual exercise editing, require exercise name
+            if (editingDateGroup) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = !exerciseName.value.trim();
+            }
         }
 
         exerciseName.addEventListener('input', updateSubmitButton);
