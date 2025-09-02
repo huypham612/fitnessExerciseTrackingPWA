@@ -938,14 +938,15 @@
             originalDateGroupKey = dateKey;
             editingExercise = null; // Clear individual exercise editing
             
-            // Set current date as default
-            const today = new Date().toISOString().split('T')[0];
+            // Set current date as default (timezone-aware)
+            const today = new Date();
+            const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             
             // Clear form fields
             exerciseName.value = '';
             exerciseWeight.value = '';
             exerciseNote.value = '';
-            exerciseDate.value = today; // Always use current date
+            exerciseDate.value = localDate; // Always use current date
             
             // Configure form for date group editing
             formTitle.textContent = `Edit Date for ${exerciseCount} exercise${exerciseCount !== 1 ? 's' : ''}`;
