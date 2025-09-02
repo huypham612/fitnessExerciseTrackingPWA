@@ -1,4 +1,4 @@
-const VERSION = '1.0.1';
+const VERSION = '1.0.2';
 const CACHE_NAME = `fitness-tracker-v${VERSION}`;
 const urlsToCache = [
   './',
