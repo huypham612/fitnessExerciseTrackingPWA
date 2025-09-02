@@ -11,26 +11,7 @@ A Progressive Web App for tracking fitness exercises with dates, weights, and no
 4. Tap "Add" to install the PWA
 5. The app will appear on your home screen like a native app
 
-### Android
-1. Open the app in Chrome
-2. Tap the menu (three dots)
-3. Select "Add to Home Screen" or "Install App"
-4. Follow the prompts to install
-
-## 📋 How Sorting Works
-
-### Exercise Organization
-The app organizes exercises in a two-level hierarchy:
-
-#### 1. Date Groups (Top Level)
-- **Latest dates on top** - Today's workout appears first
-- **"No Date" group at bottom** - Exercises without dates
-
-#### 2. Within Each Date Group
-- **Older exercises on top** - First exercise added to that date appears first
-- **Newer exercises at bottom** - Recently added/moved exercises appear last
-
-### Use Case: Daily Routine
+## Use Case: Daily Routine
 Perfect for tracking a routine with the same date:
 
 ```
@@ -84,25 +65,14 @@ The app will be available at `http://localhost:8000`
 
 3. **Your app will be live at**: https://huypham612.github.io/fitnessExerciseTrackingPWA
 
-### For Updates - Simple Workflow
-1. **Edit the files directly** (index.html, sw.js, manifest.json, etc.)
-2. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Update app features"
-   git push origin main
-   ```
-3. **GitHub Pages automatically updates** (usually within 1-2 minutes)
-4. **Users get updates automatically** via service worker
+### Deployment
+```bash
+# Update version in sw.js to force update
+sed -i '' "s/const VERSION = '[^']*'/const VERSION = '1.0.2'/" sw.js
 
-### For Users - Getting Updates
-The app updates automatically via service worker when you reopen it. If you don't see new changes:
+# Push to main branch
+git add . && git commit -m "update" && git push
 
-**On Mobile PWA:**
-- Close the app completely (swipe up and close)
-- Reopen the app from home screen
-- New version will download automatically
-
-**On Web Browser:**
-- Refresh the page normally
-- Service worker will check for updates and apply them
+# GitHub Pages auto-deploys
+# PWAs auto-update on next visit
+```
