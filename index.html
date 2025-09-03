@@ -10,9 +10,11 @@
     
     <!-- PWA Meta Tags -->
     <meta name="description" content="Track your fitness exercises with ease">
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#111827" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" media="(prefers-color-scheme: light)">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" media="(prefers-color-scheme: dark)">
     <meta name="apple-mobile-web-app-title" content="FitnessTracker">
     
     <!-- Icons -->
@@ -199,6 +201,7 @@
             transition: all 0.2s;
             background-color: #ffffff;
             color: #374151;
+            font-size: 1rem;
         }
 
         @media (prefers-color-scheme: dark) {
@@ -1036,9 +1039,34 @@
             }, 5000);
         });
 
+        // Update theme color and status bar for system theme changes
+        function updateThemeColor() {
+            const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Update theme-color meta tags
+            const lightThemeMeta = document.querySelector('meta[name="theme-color"][media*="light"]');
+            const darkThemeMeta = document.querySelector('meta[name="theme-color"][media*="dark"]');
+            
+            if (lightThemeMeta) lightThemeMeta.setAttribute('content', '#ffffff');
+            if (darkThemeMeta) darkThemeMeta.setAttribute('content', '#111827');
+            
+            // Update Apple status bar style
+            const lightStatusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"][media*="light"]');
+            const darkStatusMeta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"][media*="dark"]');
+            
+            if (lightStatusMeta) lightStatusMeta.setAttribute('content', 'default');
+            if (darkStatusMeta) darkStatusMeta.setAttribute('content', 'black-translucent');
+        }
+
+        // Listen for system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateThemeColor);
+
         loadExercises();
         renderExercises();
         updateSubmitButton();
+        
+        // Set initial theme color
+        updateThemeColor();
     </script>
 </body>
 </html>
