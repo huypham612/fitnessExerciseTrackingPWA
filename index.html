@@ -900,12 +900,13 @@
             
             exercisesList.innerHTML = groups.map(group => `
                 <div class="exercises-list">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <div style="display: flex; align-items: center; margin-bottom: 0.75rem;">
                         <h3 class="section-title" style="margin-bottom: 0;">${group.displayDate}</h3>
-                        <button class="edit-btn" onclick="editDateGroup('${group.date}', ${group.exercises.length})" style="padding: 0.5rem;">
+                        <button class="edit-btn" onclick="editDateGroup('${group.date}', ${group.exercises.length})" style="padding: 0.5rem; margin-left: 0.5rem;">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                <circle cx="12" cy="12" r="1"></circle>
+                                <circle cx="19" cy="12" r="1"></circle>
+                                <circle cx="5" cy="12" r="1"></circle>
                             </svg>
                         </button>
                     </div>
@@ -917,9 +918,10 @@
                                 ${exercise.note ? `<span class="exercise-note">${exercise.note}</span>` : ''}
                             </div>
                             <button class="edit-btn" onclick="editExercise('${exercise.id}')">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="m18.5 2.5 a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="1"></circle>
+                                    <circle cx="19" cy="12" r="1"></circle>
+                                    <circle cx="5" cy="12" r="1"></circle>
                                 </svg>
                             </button>
                         </div>
